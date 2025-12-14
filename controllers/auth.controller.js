@@ -41,6 +41,26 @@ export const logout = (req, res) => {
   res.json({ message: 'Logged out' });
 };
 
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId, { password: 0, __v: 0 });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthenticated' });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(401).json({ error: 'Unauthenticated' });
+  }
+};
+
 export const dashboard = (req, res) => {
   res.json({
     message: 'Welcome to dashboard',
