@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const { createToken } = require('../utils/jwt');
+import bcrypt from 'bcrypt';
+import User from '../models/User.js';
+import { createToken } from '../utils/jwt.js';
 
 const cookieOptions = () => {
   const isProd = process.env.NODE_ENV === 'production';
@@ -12,7 +12,7 @@ const cookieOptions = () => {
   };
 };
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
   res.status(201).json({ message: 'User registered' });
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -36,14 +36,31 @@ exports.login = async (req, res) => {
   res.json({ message: 'Login successful' });
 };
 
-exports.logout = (req, res) => {
+export const logout = (req, res) => {
   res.clearCookie('token', cookieOptions());
   res.json({ message: 'Logged out' });
 };
 
-exports.dashboard = (req, res) => {
+export const dashboard = (req, res) => {
   res.json({
     message: 'Welcome to dashboard',
     userId: req.userId
   });
+};
+
+export const test = (req, res) => {
+  res.json({ message: 'Test API is working!', timestamp: new Date().toISOString() });
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0 }).sort({ createdAt: -1 });
+    res.json({
+      message: 'Users retrieved successfully',
+      count: users.length,
+      users
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
 };

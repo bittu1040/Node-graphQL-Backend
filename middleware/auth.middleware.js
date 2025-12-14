@@ -1,6 +1,6 @@
-const { verifyToken } = require('../utils/jwt');
+import { verifyToken } from '../utils/jwt.js';
 
-exports.authGuard = (req, res, next) => {
+export const authGuard = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
