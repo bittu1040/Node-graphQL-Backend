@@ -19,8 +19,8 @@ const publicLimiter = rateLimit({
 // middleware to require secret header for trusted clients
 const requireSecret = (req, res, next) => {
 	const secret = process.env.EVENTS_SECRET || 'default_event_secret';
-	const header = req.header('x-events-secret');
-	if (!header || header !== secret) {
+	const providedSecret = req.header('x-events-secret') || req.query.secret;
+	if (!providedSecret || providedSecret !== secret) {
 		return res.status(401).json({ success: '0 records added', failed: 'Unauthorized' });
 	}
 	next();
