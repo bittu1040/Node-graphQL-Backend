@@ -12,9 +12,14 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigins = [
+  'http://localhost:4200',
+  'https://angular21-graphql.vercel.app'
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: allowedOrigins,
     credentials: true
   })
 );
